@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Algoritma Pohon - Machine Learning</title>
     <style>
         * {
@@ -18,13 +18,13 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
         .presentation {
             width: 100%;
             max-width: 1000px;
-            aspect-ratio: 16/9;
             background: white;
             border-radius: 10px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -32,10 +32,117 @@
             overflow: hidden;
         }
 
+        /* Desktop view */
+        @media (min-width: 768px) {
+            .presentation {
+                aspect-ratio: 16/9;
+            }
+            .slide {
+                padding: 60px;
+            }
+        }
+
+        /* Mobile view */
+        @media (max-width: 767px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+            }
+            
+            .presentation {
+                min-height: 100vh;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            
+            .slide {
+                padding: 20px 15px 80px 15px;
+                min-height: 100vh;
+            }
+
+            h1 {
+                font-size: 1.8em !important;
+            }
+
+            h2 {
+                font-size: 1.5em !important;
+                margin-bottom: 20px !important;
+            }
+
+            h3 {
+                font-size: 1.2em !important;
+                margin: 15px 0 10px 0 !important;
+            }
+
+            .subtitle {
+                font-size: 1.1em !important;
+            }
+
+            .content {
+                font-size: 0.95em !important;
+            }
+
+            ul {
+                margin: 15px 0 !important;
+            }
+
+            li {
+                padding: 8px 0 8px 25px !important;
+                font-size: 0.9em;
+            }
+
+            li:before {
+                font-size: 1.2em !important;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            .box {
+                padding: 15px !important;
+            }
+
+            .formula {
+                padding: 10px !important;
+                font-size: 0.85em !important;
+            }
+
+            .comparison-table {
+                font-size: 0.75em !important;
+            }
+
+            .comparison-table td {
+                padding: 6px 4px !important;
+            }
+
+            .navigation {
+                bottom: 10px !important;
+                right: 10px !important;
+                gap: 8px !important;
+                flex-direction: row;
+            }
+
+            button {
+                padding: 10px 16px !important;
+                font-size: 0.9em !important;
+            }
+
+            .slide-number {
+                bottom: 10px !important;
+                left: 10px !important;
+                font-size: 0.8em !important;
+            }
+
+            .slide-title {
+                padding: 40px 20px !important;
+            }
+        }
+
         .slide {
             width: 100%;
             height: 100%;
-            padding: 60px;
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -452,6 +559,7 @@
                 </ul>
             </div>
         </div>
+
 
         <!-- Slide 16: Closing -->
         <div class="slide slide-title">
