@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritma Pohon - Machine Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .presentation {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            opacity: 0.95;
+        }
+
+        .content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        li {
+            padding: 12px 0 12px 30px;
+            position: relative;
+        }
+
+        li:before {
+            content: "●";
+            color: #667eea;
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .box.success {
+            border-left-color: #28a745;
+        }
+
+        .box.danger {
+            border-left-color: #dc3545;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:first-child td {
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active slide-title">
+            <h1>ALGORITMA POHON</h1>
+            <p class="subtitle">Decision Tree, Random Forest, dan Gradient Boosting</p>
+            <p style="margin-top: 40px; font-size: 1.1em;">Modul 3 - Machine Learning</p>
+        </div>
+
+        <!-- Slide 2: Tujuan -->
+        <div class="slide">
+            <h2>Tujuan Pembelajaran</h2>
+            <div class="content">
+                <ul>
+                    <li>Memahami algoritma pohon pada machine learning</li>
+                    <li>Melatih model Decision Tree, Random Forest, dan XGBoost</li>
+                    <li>Menggunakan Optuna untuk hyperparameter tuning model</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Decision Tree Intro -->
+        <div class="slide">
+            <h2>Decision Tree</h2>
+            <div class="content">
+                <p><strong>Algoritma machine learning</strong> untuk klasifikasi dan regresi dengan struktur seperti pohon.</p>
+                
+                <h3>Komponen Utama:</h3>
+                <ul>
+                    <li><span class="highlight">Root Node</span> - Titik awal, mewakili seluruh dataset</li>
+                    <li><span class="highlight">Decision Node</span> - Keputusan berdasarkan fitur tertentu</li>
+                    <li><span class="highlight">Leaf Node</span> - Hasil akhir (label kelas atau nilai numerik)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Decision Tree Parameters -->
+        <div class="slide">
+            <h2>Parameter Utama Decision Tree</h2>
+            <div class="content">
+                <ul>
+                    <li><strong>Criterion:</strong> Gini Impurity, Entropy, Log Loss</li>
+                    <li><strong>max_depth:</strong> Kedalaman maksimal pohon</li>
+                    <li><strong>min_samples_split:</strong> Minimum sampel untuk split</li>
+                    <li><strong>min_samples_leaf:</strong> Minimum sampel pada leaf</li>
+                    <li><strong>max_features:</strong> Jumlah fitur untuk pembagian</li>
+                    <li><strong>Splitter:</strong> Best atau Random</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Decision Tree Pros/Cons -->
+        <div class="slide">
+            <h2>Kelebihan & Kekurangan Decision Tree</h2>
+            <div class="two-column">
+                <div class="box success">
+                    <h3>Kelebihan ✓</h3>
+                    <ul style="font-size: 0.95em;">
+                        <li>Mudah dipahami dan diinterpretasikan</li>
+                        <li>Memerlukan sedikit pra-pemrosesan data</li>
+                    </ul>
+                </div>
+                <div class="box danger">
+                    <h3>Kekurangan ✗</h3>
+                    <ul style="font-size: 0.95em;">
+                        <li>Rentan terhadap overfitting</li>
+                        <li>Pohon dalam menjadi kompleks dan sulit diinterpretasikan</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Random Forest Intro -->
+        <div class="slide">
+            <h2>Random Forest</h2>
+            <div class="content">
+                <p><strong>Ensemble learning</strong> yang menggabungkan banyak Decision Trees untuk meningkatkan akurasi dan mengurangi overfitting.</p>
+                
+                <h3>Konsep Utama:</h3>
+                <ul>
+                    <li>Menggunakan <span class="highlight">bagging</span> (bootstrap aggregating)</li>
+                    <li>Setiap pohon dilatih dengan subset acak dari data dan fitur</li>
+                    <li>Hasil akhir: voting (klasifikasi) atau rata-rata (regresi)</li>
+                    <li>Lebih robust dan tidak mudah "menghafal" data latih</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Random Forest Parameters -->
+        <div class="slide">
+            <h2>Parameter Utama Random Forest</h2>
+            <div class="content">
+                <ul>
+                    <li><strong>n_estimators:</strong> Jumlah pohon (default: 100, rekomendasi: 100-300)</li>
+                    <li><strong>max_depth:</strong> Kedalaman maksimal (biasanya: 10-20)</li>
+                    <li><strong>min_samples_split:</strong> Minimum sampel untuk split (default: 2)</li>
+                    <li><strong>min_samples_leaf:</strong> Minimum sampel di leaf (1-5 untuk dataset besar)</li>
+                    <li><strong>max_features:</strong> Fitur per split ("sqrt" atau "log2")</li>
+                    <li><strong>bootstrap:</strong> Sampling dengan penggantian (default: True)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Random Forest Pros/Cons -->
+        <div class="slide">
+            <h2>Kelebihan & Kekurangan Random Forest</h2>
+            <div class="two-column">
+                <div class="box success">
+                    <h3>Kelebihan ✓</h3>
+                    <ul style="font-size: 0.85em;">
+                        <li>Akurasi tinggi</li>
+                        <li>Robust terhadap overfitting</li>
+                        <li>Menangani data tidak seimbang</li>
+                        <li>Menangani data hilang dengan baik</li>
+                    </ul>
+                </div>
+                <div class="box danger">
+                    <h3>Kekurangan ✗</h3>
+                    <ul style="font-size: 0.85em;">
+                        <li>Kebutuhan memori tinggi</li>
+                        <li>Interpretabilitas rendah</li>
+                        <li>Lambat pada prediksi</li>
+                        <li>Waktu pelatihan lama</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: XGBoost Intro -->
+        <div class="slide">
+            <h2>XGBoost (Extreme Gradient Boosting)</h2>
+            <div class="content">
+                <p>Implementasi populer dari <strong>Gradient Boosting</strong> - metode ensemble yang membangun model secara <span class="highlight">sekuensial</span>.</p>
+                
+                <h3>Perbedaan dengan Random Forest:</h3>
+                <div class="formula">
+                    Random Forest: Bagging (paralel) → Kurangi variansi<br>
+                    XGBoost: Boosting (sekuensial) → Kurangi bias
+                </div>
+                
+                <p><strong>Gradient:</strong> Optimasi gradient descent untuk meminimalkan error</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: XGBoost How It Works -->
+        <div class="slide">
+            <h2>Cara Kerja XGBoost</h2>
+            <div class="content">
+                <ul>
+                    <li>Model pertama memprediksi target data</li>
+                    <li>Error dari model pertama dihitung</li>
+                    <li>Model baru ditambahkan dengan bobot (learning rate) untuk memperbaiki prediksi</li>
+                    <li>Proses diulang hingga error cukup kecil atau mencapai iterasi maksimum</li>
+                    <li>Prediksi akhir = jumlah kontribusi seluruh pohon</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: XGBoost Parameters -->
+        <div class="slide">
+            <h2>Parameter Utama XGBoost</h2>
+            <div class="content" style="font-size: 0.95em;">
+                <ul>
+                    <li><strong>n_estimators:</strong> Jumlah pohon sekuensial</li>
+                    <li><strong>learning_rate (eta):</strong> Kontribusi tiap pohon (0.05-0.1)</li>
+                    <li><strong>max_depth:</strong> Kedalaman maksimal (3-6)</li>
+                    <li><strong>subsample:</strong> Proporsi data pelatihan (0.5-1)</li>
+                    <li><strong>colsample_bytree:</strong> Proporsi fitur per pohon</li>
+                    <li><strong>gamma:</strong> Minimum pengurangan loss untuk split</li>
+                    <li><strong>reg_lambda/reg_alpha:</strong> Regularisasi L2/L1</li>
+                    <li><strong>objective:</strong> Fungsi loss (reg:squarederror, binary:logistic)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: XGBoost Pros/Cons -->
+        <div class="slide">
+            <h2>Kelebihan & Kekurangan XGBoost</h2>
+            <div class="two-column">
+                <div class="box success">
+                    <h3>Kelebihan ✓</h3>
+                    <ul style="font-size: 0.85em;">
+                        <li>Akurasi sangat tinggi</li>
+                        <li>Regularisasi untuk kurangi overfitting</li>
+                        <li>Menangani nilai hilang</li>
+                        <li>Paralelisasi dan komputasi terdistribusi</li>
+                        <li>Early stopping</li>
+                    </ul>
+                </div>
+                <div class="box danger">
+                    <h3>Kekurangan ✗</h3>
+                    <ul style="font-size: 0.85em;">
+                        <li>Kompleks untuk tuning</li>
+                        <li>Waktu pelatihan bisa lama</li>
+                        <li>Interpretabilitas menurun</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Comparison -->
+        <div class="slide">
+            <h2>Perbandingan Algoritma</h2>
+            <table class="comparison-table">
+                <tr>
+                    <td>Aspek</td>
+                    <td>Decision Tree</td>
+                    <td>Random Forest</td>
+                    <td>XGBoost</td>
+                </tr>
+                <tr>
+                    <td>Metode</td>
+                    <td>Single tree</td>
+                    <td>Bagging</td>
+                    <td>Boosting</td>
+                </tr>
+                <tr>
+                    <td>Overfitting</td>
+                    <td>Tinggi</td>
+                    <td>Rendah</td>
+                    <td>Rendah</td>
+                </tr>
+                <tr>
+                    <td>Akurasi</td>
+                    <td>Sedang</td>
+                    <td>Tinggi</td>
+                    <td>Sangat Tinggi</td>
+                </tr>
+                <tr>
+                    <td>Kecepatan</td>
+                    <td>Cepat</td>
+                    <td>Sedang</td>
+                    <td>Lambat</td>
+                </tr>
+                <tr>
+                    <td>Interpretabilitas</td>
+                    <td>Tinggi</td>
+                    <td>Rendah</td>
+                    <td>Rendah</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 14: Optuna -->
+        <div class="slide">
+            <h2>Optuna - Hyperparameter Tuning</h2>
+            <div class="content">
+                <p><strong>Library open-source</strong> untuk optimasi hyperparameter yang efisien dan otomatis.</p>
+                
+                <h3>Fitur Utama:</h3>
+                <ul>
+                    <li><span class="highlight">Define-by-run:</span> Pencarian dinamis saat eksekusi</li>
+                    <li><span class="highlight">Bayesian Optimization:</span> TPE (Tree-structured Parzen Estimator)</li>
+                    <li><span class="highlight">Pruning:</span> Hentikan percobaan yang tidak menjanjikan</li>
+                    <li>Integrasi dengan XGBoost, LightGBM, PyTorch</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 16: Closing -->
+        <div class="slide slide-title">
+            <h1>Terima Kasih</h1>
+            <p style="margin-top: 50px; font-size: 1em;">Referensi: Géron (2019), Grigorev (2021)</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+        <div class="slide-number" id="slideNumber">1 / 16</div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('slideNumber').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>
